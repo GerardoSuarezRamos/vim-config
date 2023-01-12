@@ -97,18 +97,26 @@ packer.startup(function(use)
   use({ "akinsho/toggleterm.nvim", tag = "*" })
 
   -- theme
-  use({
-    'rose-pine/neovim',
-    as = 'rose-pine',
-    config = function()
-      vim.cmd('colorscheme rose-pine')
-    end
-  })
+  use('folke/tokyonight.nvim')
 
   -- the primeagen
   use('theprimeagen/harpoon')
 
   -- redo tree
   use('mbbill/undotree')
+
+  -- Color Picker
+  use({ "ziontee113/color-picker.nvim",
+    config = function()
+      require("color-picker")
+    end,
+  })
+
+  --colorizer text hexadecimal
+  use('norcalli/nvim-colorizer.lua')
+
+  -- install without yarn or npm
+  use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install",
+    setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
 
 end)
