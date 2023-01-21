@@ -1,39 +1,31 @@
-return {
-    "glepnir/lspsaga.nvim",
-    branch = "main",
-    config = function()
-        local map = require "user.utils".map
-        local saga = require"lspsaga"
-        local opts = { noremap = true, silent = true }
-        saga.init_lsp_saga {
-            border_style = "rounded",
-            -- code_action_icon = "",
-            code_action_lightbulb = {
-                sign = true,
-                virtual_text = true
-            },
-            code_action_keys = {
-                quit = "<esc>",
-                exec = "<cr>",
-            },
-            finder_action_keys = {
-                open = "o",
-                vsplit = "<c-v>",
-                split = "<c-x>",
-                tabe = "t",
-                quit = "<esc>",
-                scroll_down = "<c-d>",
-                scroll_up = "<c-u>", -- quit can be a table
-            },
-            server_filetype_map = {
-              typescript = 'typescript'
-            }
-        }
-        map('n', '<C-j>', '<Cmd>Lspsaga diagnostic_jump_next<CR>', opts)
-        map('n', 'K', '<Cmd>Lspsaga hover_doc<CR>', opts)
-        map('n', 'gd', '<Cmd>Lspsaga lsp_finder<CR>', opts)
-        map('i', '<C-k>', '<Cmd>Lspsaga signature_help<CR>', opts)
-        map('n', 'gp', '<Cmd>Lspsaga preview_definition<CR>', opts)
-        map('n', 'gr', '<Cmd>Lspsaga rename<CR>', opts)
-    end,
-}
+local status, saga = pcall(require, "lspsaga")
+if (not status) then return end
+
+saga.setup({
+  ui = {
+    winblend = 10,
+    border = 'rounded',
+    colors = {
+      normal_bg = '#002b36'
+    }
+  }
+})
+
+local diagnostic = require("lspsaga.diagnostic")
+local opts = { noremap = true, silent = true }
+vim.keymap.set('n', '<C-j>', diagnostic.goto_next, opts)
+vim.keymap.set('n', 'gl', diagnostic.show_diagnostics, opts)
+vim.keymap.set('n', 'K', '<Cmd>Lspsaga hover_doc<CR>', opts)
+vim.keymap.set('n', 'gd', '<Cmd>Lspsaga lsp_finder<CR>', opts)
+-- vim.keymap.set('i', '<C-k>', '<Cmd>Lspsaga signature_help<CR>', opts)
+vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+vim.keymap.set('n', 'gp', '<Cmd>Lspsaga peek_definition<CR>', opts)
+vim.keymap.set('n', 'gr', '<Cmd>Lspsaga rename<CR>', opts)
+
+-- code action
+local codeaction = require("lspsaga.codeaction")
+vim.keymap.set("n", "<leader>ca", function() codeaction:code_action() end, { silent = true })
+vim.keymap.set("v", "<leader>ca", function()
+  vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<C-U>", true, false, true))
+  codeaction:range_code_action()
+end, { silent = true })

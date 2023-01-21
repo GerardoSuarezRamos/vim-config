@@ -28,7 +28,7 @@ null_ls.setup({
 		end
 
 		if client.server_capabilities.documentRangeFormattingProvider then
-			vim.cmd("xnoremap <silent><buffer> <Leader>f :lua vim.lsp.buf.range_formatting({})<CR>")
+			vim.cmd("xnoremap <silent><buffer> <Leader>f :lua vim.lsp.buf.range_formatting({async: true})<CR>")
 		end
 	end,
 })
